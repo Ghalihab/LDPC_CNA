@@ -42,8 +42,10 @@ function [c_cor]= SOFT_DECODER_GROUPE12(c,H,P_1,MAX_ITER)
     iter= 0;
     
     parity_check=H_real*trans_c;
+    P_1
+    
+  while (iter<MAX_ITER && any(parity_check))
     compt=0;
-    R_1=P_1;
     P_bis_0=zeros(N,1);
     P_bis_0=P_bis_0+1;
     P_bis_1=zeros(N,1);
@@ -55,10 +57,7 @@ function [c_cor]= SOFT_DECODER_GROUPE12(c,H,P_1,MAX_ITER)
     P_0=1-P_1;
     R_0=P_0;
     K=zeros(N,1);
-
-  while (iter<MAX_ITER && any(parity_check))
-      iter=iter+1;
-      c_bis=c_cor;
+    iter=iter+1;
     for c_node=1:N  %On parcourt le vecteur c
        f_node_dec = zeros(1,wc); 
         for i=1:M  %On parcourt la matrice H (lignes)
@@ -76,13 +75,10 @@ function [c_cor]= SOFT_DECODER_GROUPE12(c,H,P_1,MAX_ITER)
                %On vérifie que ce f node est bien connecté au c node
             
             end    
-            
-            if (H_real(i,c_node)==1)
-                compt=compt+1;
-                f_node_dec(compt)=res_wc; 
-                
-            end
-            R_0(i)=(1/2)*R_0(i)+(1/2);
+             R_0(i)=(1/2)*R_0(i)+(1/2);
+             
+         
+           
         end
         
         %On prend en compte la valeur de c
@@ -90,38 +86,44 @@ function [c_cor]= SOFT_DECODER_GROUPE12(c,H,P_1,MAX_ITER)
         for i=1:M
             for j=1:N 
                 if (j ~= c_node && H_real(i,c_node)==1)
-                    P_bis_0(i)=P_bis0(i)*R_0(i);
-                    P_bis_1(i)=P_bis1(i)*(1-R_0(i));
+                    P_bis_0(i)=P_bis_0(i)*R_0(i);
+                    P_bis_1(i)=P_bis_1(i)*(1-R_0(i));
                 end
             end
-            P_bis_1(i)=P_bis1(i)*P_1(i);
-            P_bis_0(i)=P_bis0*(1-P_1(i));
-            K(i)=1/(P_bis_1(i)+P_bis_1(i));
+            P_bis_1(i)=P_bis_1(i)*P_1(i);
+            P_bis_0(i)=P_bis_0(i)*(1-P_1(i));
+            K(i)=1/(P_bis_1(i)+P_bis_0(i));
         end
         for i=1:M
-            for j=1:N 
-                if (H_real(i,c_node)==1)
+            if (H_real(i,c_node)==1)
+                for j=1:N 
+                
                     Q_0(i)=Q_0(i)*R_0(i);
                     Q_1(i)=Q_1(i)*(1-R_0(i));
                 end
             end
-            Q_0(i)=Q_0*K(i)*(1-P_1(i));
-            Q_1(i)=Q_1*K(i)*P_1(i);
+            
+            Q_0(i)=Q_0(i)*K(i)*(1-P_1(i));
+            Q_1(i)=Q_1(i)*K(i)*P_1(i);
 
         end
         
-        if(Q_0<Q_1)
+        if(Q_0(c_node)<Q_1(c_node))
            dec=1; 
         else
            dec=0;
         end
            % disp(c_cor);
-
+        Q_0
+        Q_1
         c_cor(c_node)=dec;
+        c_cor
         trans_c=c_cor;
     end
         R_0=1;
         parity_check=H_real*trans_c;
+        P_1=P_bis_1;
+        
     %disp(c_cor);
   end
 end
