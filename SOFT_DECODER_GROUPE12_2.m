@@ -37,12 +37,10 @@ function [c_cor]= SOFT_DECODER_GROUPE12_2(c,H,P,MAX_ITER)
         for j=1:lignes 
             for i=1:colonnes 
                 if(H(j,i)==1)
-                    prod = 1;
-                    %R(j,i) = 1;
+                    R(j,i) = 1;
                     for i_prime=1:colonnes
                              if(i_prime ~= i)
-                                %R(j,i) = R(j,i)*(1-2*q_1(i_prime,j));
-                                prod = prod * (1-2*q_1(i_prime,j));
+                                R(j,i) = R(j,i)*(1-2*q_1(i_prime,j));
                              end
 
                     end
