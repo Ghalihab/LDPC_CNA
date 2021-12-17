@@ -1,4 +1,4 @@
-function [c_cor]= HARD_DECODEUR(c,H,MAX_ITER)
+function [c_cor]= HARD_DECODER_GROUPE12(c,H,MAX_ITER)
     mat=size(H);
     M=mat(1);
     N=mat(2);
